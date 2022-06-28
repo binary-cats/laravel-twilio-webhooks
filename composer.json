@@ -1,0 +1,62 @@
+{
+    "name": "binary-cats/laravel-twilio-webhooks",
+    "description": "Handle Twilio callbacks / webhooks in a Laravel application",
+    "keywords": [
+        "binary-cats",
+        "callback",
+        "laravel",
+        "twilio",
+        "webhooks"
+    ],
+    "homepage": "https://github.com/binary-cats/laravel-twilio-webhooks",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cyrill Kalita",
+            "email": "cyrill.kalita@gmail.com",
+            "homepage": "https://github.com/binary-cats",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^8.0|^9.0",
+        "spatie/laravel-webhook-client": "^3.0",
+        "twilio/sdk": "^6.37"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0|^7.0",
+        "phpunit/phpunit": "^9.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "BinaryCats\\TwilioWebhooks\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "suggest": {
+            "binary-cats/laravel-lob-webhooks": "^9.0"
+    },
+    "scripts": {
+        "coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html coverage -d pcov.enabled",
+        "test": "./vendor/bin/phpunit --color=always -vvv"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "BinaryCats\\TwilioWebhooks\\TwilioWebhooksServiceProvider"
+            ]
+        }
+    }
+}
