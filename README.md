@@ -123,6 +123,21 @@ There are two ways this package enables you to handle webhook requests: you can 
 
 **Please make sure your configured keys are lowercase, as the package will automatically ensure they are**
 
+### Programmable Messaging (Outbound) Webhook Event Types
+
+At the time of this writing, the following event types are used by Programmable Messaging Webhooks:
+
+- `queued`
+- `canceled`
+- `sent`
+- `failed`
+- `delivered`
+- `undelivered`
+- `read`
+
+For the most up-to-date information and additional details, please refer to the official Twilio documentation: [Twilio Programmable Messaging: Outbound Message Status in Status Callbacks](https://www.twilio.com/docs/messaging/guides/outbound-message-status-in-status-callbacks#message-status-changes-triggering-status-callback-requests).
+
+
 ### Handling webhook requests using jobs
 If you want to do something when a specific event type comes in you can define a job that does the work. Here's an example of such a job:
 
