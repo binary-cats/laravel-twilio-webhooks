@@ -10,11 +10,11 @@ use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
 class ProcessTwilioWebhookJob extends ProcessWebhookJob
 {
     /**
-     * Name of the payload key to contain the type of event.
+     * Name of the payload keys to contain the type of event.
      *
-     * @var string
+     * @var array
      */
-    protected $key = 'CallStatus';
+    protected $keys = ['CallStatus', 'SmsStatus'];
 
     /**
      * Handle the process.
@@ -23,7 +23,13 @@ class ProcessTwilioWebhookJob extends ProcessWebhookJob
      */
     public function handle()
     {
-        $type = Arr::get($this->webhookCall, "payload.{$this->key}");
+        $type = null;
+        foreach ($this->keys as $key) {
+            $type = Arr::get($this->webhookCall, "payload.{$key}");
+            if ($type) {
+                break;
+            }
+        }
 
         if (! $type) {
             throw WebhookFailed::missingType($this->webhookCall);
