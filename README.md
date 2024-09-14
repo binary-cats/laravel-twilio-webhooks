@@ -3,7 +3,7 @@
 ![https://github.com/binary-cats/laravel-twilio-webhooks/actions](https://github.com/binary-cats/laravel-twilio-webhooks/workflows/Laravel/badge.svg)
 
 [Twilio](https://twilio.com) can notify your application of various engagement events using webhooks. This package can help you handle those webhooks. 
-Out of the box it will verify the Twilio signature of all incoming requests. All valid calls will be logged to the database. 
+Out of the box it will verify the Twilio signature of all incoming requests. All valid calls and messages will be logged to the database. 
 You can easily define jobs or events that should be dispatched when specific events hit your app.
 
 This package will not handle what should be done _after_ the webhook request has been validated and the right job or event is called. 
@@ -158,7 +158,7 @@ class HandleInitiated implements ShouldQueue
 }
 ```
 
-Spatie highly recommends that you make this job queueable, because this will minimize the response time of the webhook requests. This allows you to handle more Mailgun webhook requests and avoid timeouts.
+Spatie highly recommends that you make this job queueable, because this will minimize the response time of the webhook requests. This allows you to handle more Twilio webhook requests and avoid timeouts.
 
 After having created your job you must register it at the `jobs` array in the `twilio-webhooks.php` config file.\
 The key should be the name of twilio event type.\
@@ -214,7 +214,7 @@ class InitiatedCall implements ShouldQueue
 }
 ```
 
-Spatie highly recommends that you make the event listener queueable, as this will minimize the response time of the webhook requests. This allows you to handle more Mailgun webhook requests and avoid timeouts.
+Spatie highly recommends that you make the event listener queueable, as this will minimize the response time of the webhook requests. This allows you to handle more Twilio webhook requests and avoid timeouts.
 
 The above example is only one way to handle events in Laravel. To learn the other options, read [the Laravel documentation on handling events](https://laravel.com/docs/9.x/events).
 
@@ -267,7 +267,7 @@ Route::twilioWebhooks('webhooks/twilio.com/{configKey}');
 Alternatively, if you are manually defining the route, you can add `configKey` like so:
 
 ```php
-Route::post('webhooks/twilio.com/{configKey}', 'BinaryCats\MailgunWebhooks\MailgunWebhooksController');
+Route::post('webhooks/twilio.com/{configKey}', 'BinaryCats\TwilioWebhooks\TwilioWebhooksController');
 ```
 
 If this route parameter is present verify middleware will look for the secret using a different config key, by appending the given the parameter value to the default config key. E.g. If Twilio posts to `webhooks/twilio.com/my-named-secret` you'd add a new config named `signing_token_my-named-secret`.
@@ -281,7 +281,7 @@ Example config might look like:
 'signing_token_my-alternative-secret' => 'whsec_123',
 ```
 
-### About Mailgun
+### About Twilio
 
 [Twilio](https://www.twilio.com/) powers personalized interactions and trusted global communications to connect you with customers.
 
