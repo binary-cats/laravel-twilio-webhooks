@@ -245,7 +245,7 @@ https://yourdomain.com/webhooks/twilio.com?order_id=12345&user_id=67890
 
 In this example, order_id=12345 and user_id=67890 are custom parameters that will be passed back with the webhook payload. Twilio will include these parameters in the webhook request, allowing you to access this information directly in your webhook processing logic.
 
-**Note:** When building your `statusCallback` URL, ensure that the query parameter keys are alphabetized. This is necessary to prevent webhook verification failures because the `Request` facade's [`fullUrl` function`](https://laravel.com/api/9.x/Illuminate/Support/Facades/Request.html#method_fullUrl) (i.e., `$request->fullUrl()`) automatically returns the query parameters in alphabetical order.
+**Note:** When building your `statusCallback` URL, ensure that the query parameter keys are alphabetized. This is necessary to prevent webhook verification failures because the `Request` facade's [`fullUrl()` function](https://laravel.com/api/9.x/Illuminate/Support/Facades/Request.html#method_fullUrl) (i.e., `$request->fullUrl()`) automatically returns the query parameters in alphabetical order.
 
 ### Retry handling a webhook
 
