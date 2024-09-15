@@ -235,6 +235,19 @@ The above example is only one way to handle events in Laravel. To learn the othe
 
 ## Advanced usage
 
+### Adding Metadata to the Webhook Call
+
+You can pass custom metadata with your Twilio webhooks by adding URL parameters to the `statusCallback` URL. This metadata will be included in the payload when Twilio sends the webhook request, allowing you to pass additional context or information that you might need when processing the webhook.
+
+To add metadata, simply append your custom key-value pairs as URL parameters to the `statusCallback` URL in your Twilio API request. For example:
+
+https://yourdomain.com/webhooks/twilio.com?order_id=12345&user_id=67890
+
+In this example, order_id=12345 and user_id=67890 are custom parameters that will be passed back with the webhook payload. Twilio will include these parameters in the webhook request, allowing you to access this information directly in your webhook processing logic.
+
+For more detailed information, refer to the Twilio documentation: Twilio Programmable Messaging Status Callback.
+
+
 ### Retry handling a webhook
 
 All incoming webhook requests are written to the database. This is incredibly valuable when something goes wrong while handling a webhook call. You can easily retry processing the webhook call, after you've investigated and fixed the cause of failure, like this:
