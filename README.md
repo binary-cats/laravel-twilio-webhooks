@@ -237,7 +237,7 @@ The above example is only one way to handle events in Laravel. To learn the othe
 
 ### Adding Metadata to the Webhook Call
 
-You can pass custom metadata with your Twilio webhooks by adding URL parameters to the `statusCallback` URL. This metadata will be included in the payload when Twilio sends the webhook request, allowing you to pass additional context or information that you might need when processing the webhook.
+You can pass additional metadata with your Twilio webhooks by [adding URL parameters to the `statusCallback` URL](https://www.twilio.com/docs/messaging/guides/outbound-message-logging#sending-additional-message-identifiers). This metadata will be accesible in the payload (i.e. `$this->webhookCall->payload`), allowing you to pass additional context or information that you might need when processing the webhook.
 
 To add metadata, simply append your custom key-value pairs as URL parameters to the `statusCallback` URL in your Twilio API request. For example:
 
@@ -245,8 +245,7 @@ https://yourdomain.com/webhooks/twilio.com?order_id=12345&user_id=67890
 
 In this example, order_id=12345 and user_id=67890 are custom parameters that will be passed back with the webhook payload. Twilio will include these parameters in the webhook request, allowing you to access this information directly in your webhook processing logic.
 
-For more detailed information, refer to the Twilio documentation: Twilio Programmable Messaging Status Callback.
-
+**Note:** When building your `statusCallback` URL, ensure that the query parameter keys are alphabetized. This is necessary to prevent webhook verification failures because the `Request` facade's [`fullUrl` function`](https://laravel.com/api/9.x/Illuminate/Support/Facades/Request.html#method_fullUrl) (i.e., `$request->fullUrl()`) automatically returns the query parameters in alphabetical order.
 
 ### Retry handling a webhook
 
