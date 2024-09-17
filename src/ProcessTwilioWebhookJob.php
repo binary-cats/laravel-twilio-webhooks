@@ -17,6 +17,13 @@ class ProcessTwilioWebhookJob extends ProcessWebhookJob
     protected $keys = ['CallStatus', 'SmsStatus'];
 
     /**
+     * The current key being used.
+     *
+     * @var string
+     */
+    protected $key = 'CallStatus'; // Default to 'CallStatus'
+
+    /**
      * Handle the process.
      *
      * @return void
@@ -27,6 +34,7 @@ class ProcessTwilioWebhookJob extends ProcessWebhookJob
         foreach ($this->keys as $key) {
             $type = Arr::get($this->webhookCall, "payload.{$key}");
             if ($type) {
+                $this->key = $key;
                 break;
             }
         }
@@ -64,7 +72,9 @@ class ProcessTwilioWebhookJob extends ProcessWebhookJob
      */
     public function setKey(string $key)
     {
-        $this->key = $key;
+        if (in_array($key, $this->keys)) {
+            $this->key = $key;
+        }
 
         return $this;
     }
