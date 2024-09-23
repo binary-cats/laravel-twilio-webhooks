@@ -60,6 +60,17 @@ final class WebhookSignature
      */
     public function verify(): bool
     {
-        return $this->validator->validate($this->signature, $this->request->fullUrl(), $this->request->all());
+        // Extract the URL parameters from the URL
+        $fullUrl = $this->request->fullUrl();
+        $queryParams = [];
+        parse_str(parse_url($fullUrl, PHP_URL_QUERY), $queryParams);
+
+        // Remove each key found in the URL parameters from the request data
+        $requestData = $this->request->all();
+        foreach ($queryParams as $key => $value) {
+            unset($requestData[$key]);
+        }
+        
+        return $this->validator->validate($this->signature, $fullUrl, $requestData);
     }
 }

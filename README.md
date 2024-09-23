@@ -3,7 +3,7 @@
 ![https://github.com/binary-cats/laravel-twilio-webhooks/actions](https://github.com/binary-cats/laravel-twilio-webhooks/workflows/Laravel/badge.svg)
 
 [Twilio](https://twilio.com) can notify your application of various engagement events using webhooks. This package can help you handle those webhooks. 
-Out of the box it will verify the Twilio signature of all incoming requests. All valid calls will be logged to the database. 
+Out of the box it will verify the Twilio signature of all incoming requests. All valid calls and messages will be logged to the database. 
 You can easily define jobs or events that should be dispatched when specific events hit your app.
 
 This package will not handle what should be done _after_ the webhook request has been validated and the right job or event is called. 
@@ -123,6 +123,21 @@ There are two ways this package enables you to handle webhook requests: you can 
 
 **Please make sure your configured keys are lowercase, as the package will automatically ensure they are**
 
+### Programmable Messaging (Outbound) Webhook Event Types
+
+At the time of this writing, the following event types are used by Programmable Messaging Webhooks:
+
+- `queued`
+- `canceled`
+- `sent`
+- `failed`
+- `delivered`
+- `undelivered`
+- `read`
+
+For the most up-to-date information and additional details, please refer to the official Twilio documentation: [Twilio Programmable Messaging: Outbound Message Status in Status Callbacks](https://www.twilio.com/docs/messaging/guides/outbound-message-status-in-status-callbacks#message-status-changes-triggering-status-callback-requests).
+
+
 ### Handling webhook requests using jobs
 If you want to do something when a specific event type comes in you can define a job that does the work. Here's an example of such a job:
 
@@ -158,7 +173,7 @@ class HandleInitiated implements ShouldQueue
 }
 ```
 
-Spatie highly recommends that you make this job queueable, because this will minimize the response time of the webhook requests. This allows you to handle more Mailgun webhook requests and avoid timeouts.
+Spatie highly recommends that you make this job queueable, because this will minimize the response time of the webhook requests. This allows you to handle more Twilio webhook requests and avoid timeouts.
 
 After having created your job you must register it at the `jobs` array in the `twilio-webhooks.php` config file.\
 The key should be the name of twilio event type.\
@@ -214,11 +229,23 @@ class InitiatedCall implements ShouldQueue
 }
 ```
 
-Spatie highly recommends that you make the event listener queueable, as this will minimize the response time of the webhook requests. This allows you to handle more Mailgun webhook requests and avoid timeouts.
+Spatie highly recommends that you make the event listener queueable, as this will minimize the response time of the webhook requests. This allows you to handle more Twilio webhook requests and avoid timeouts.
 
 The above example is only one way to handle events in Laravel. To learn the other options, read [the Laravel documentation on handling events](https://laravel.com/docs/9.x/events).
 
 ## Advanced usage
+
+### Adding Metadata to the Webhook Call
+
+You can pass additional metadata with your Twilio webhooks by [adding URL parameters to the `statusCallback` URL](https://www.twilio.com/docs/messaging/guides/outbound-message-logging#sending-additional-message-identifiers). This metadata will be accesible in the payload (i.e. `$this->webhookCall->payload`), allowing you to pass additional context or information that you might need when processing the webhook.
+
+To add metadata, simply append your custom key-value pairs as URL parameters to the `statusCallback` URL in your Twilio API request. For example:
+
+https://yourdomain.com/webhooks/twilio.com?order_id=12345&user_id=67890
+
+In this example, order_id=12345 and user_id=67890 are custom parameters that will be passed back with the webhook payload. Twilio will include these parameters in the webhook request, allowing you to access this information directly in your webhook processing logic.
+
+**Note:** When building your `statusCallback` URL, ensure that the query parameter keys are alphabetized. This is necessary to prevent webhook verification failures because the `Request` facade's [`fullUrl()` function](https://laravel.com/api/9.x/Illuminate/Support/Facades/Request.html#method_fullUrl) (i.e., `$request->fullUrl()`) automatically returns the query parameters in alphabetical order.
 
 ### Retry handling a webhook
 
@@ -267,7 +294,7 @@ Route::twilioWebhooks('webhooks/twilio.com/{configKey}');
 Alternatively, if you are manually defining the route, you can add `configKey` like so:
 
 ```php
-Route::post('webhooks/twilio.com/{configKey}', 'BinaryCats\MailgunWebhooks\MailgunWebhooksController');
+Route::post('webhooks/twilio.com/{configKey}', 'BinaryCats\TwilioWebhooks\TwilioWebhooksController');
 ```
 
 If this route parameter is present verify middleware will look for the secret using a different config key, by appending the given the parameter value to the default config key. E.g. If Twilio posts to `webhooks/twilio.com/my-named-secret` you'd add a new config named `signing_token_my-named-secret`.
@@ -281,7 +308,7 @@ Example config might look like:
 'signing_token_my-alternative-secret' => 'whsec_123',
 ```
 
-### About Mailgun
+### About Twilio
 
 [Twilio](https://www.twilio.com/) powers personalized interactions and trusted global communications to connect you with customers.
 

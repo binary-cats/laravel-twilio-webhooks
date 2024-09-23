@@ -102,4 +102,40 @@ class TwilioWebhookCallTest extends TestCase
         $this->assertEquals($job, $job->setKey('SmsStatus'));
         $this->assertEquals('SmsStatus', $job->getKey());
     }
+
+    /** @test */
+    public function it_handles_call_status_key_in_webhook_payload()
+    {
+        $webhookCall = WebhookCall::create([
+            'name' => 'twilio',
+            'payload' => [
+                'CallStatus' => 'completed',
+                'key' => 'value',
+            ],
+            'url' => '/webhooks/twilio.com',
+        ]);
+
+        $job = new ProcessTwilioWebhookJob($webhookCall);
+        $job->handle();
+
+        $this->assertEquals('CallStatus', $job->getKey());
+    }
+
+    /** @test */
+    public function it_handles_sms_status_key_in_webhook_payload()
+    {
+        $webhookCall = WebhookCall::create([
+            'name' => 'twilio',
+            'payload' => [
+                'SmsStatus' => 'delivered',
+                'key' => 'value',
+            ],
+            'url' => '/webhooks/twilio.com',
+        ]);
+
+        $job = new ProcessTwilioWebhookJob($webhookCall);
+        $job->handle();
+
+        $this->assertEquals('SmsStatus', $job->getKey());
+    }
 }
