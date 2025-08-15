@@ -2,20 +2,53 @@ name: Laravel
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, main ]
 
 jobs:
   laravel-tests:
-
     runs-on: ubuntu-latest
     
+    strategy:
+      matrix:
+        php-version: ['8.2', '8.3']
+        laravel-version: ['8.*', '9.*', '10.*', '11.*']
+        include:
+          - laravel-version: '8.*'
+            testbench-version: '^6.0'
+          - laravel-version: '9.*'
+            testbench-version: '^7.0'
+          - laravel-version: '10.*'
+            testbench-version: '^8.0'
+          - laravel-version: '11.*'
+            testbench-version: '^9.0'
+    
+    name: PHP ${{ matrix.php-version }} - Laravel ${{ matrix.laravel-version }}
+    
     steps:
-    - uses: actions/checkout@v2
-    - name: Copy .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+        coverage: none
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-${{ matrix.php-version }}-
+    
+    - name: Install dependencies
+      run: |
+        composer require "laravel/framework:${{ matrix.laravel-version }}" "orchestra/testbench:${{ matrix.testbench-version }}" --no-interaction --no-update
+        composer update --prefer-dist --no-interaction --no-suggest
+    
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: vendor/bin/phpunit

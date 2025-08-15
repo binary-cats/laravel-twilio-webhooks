@@ -3,7 +3,7 @@
 namespace Tests;
 
 use BinaryCats\TwilioWebhooks\TwilioWebhooksServiceProvider;
-use Exception;
+use Throwable;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Exceptions\Handler;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
@@ -68,8 +68,8 @@ abstract class TestCase extends OrchestraTestCase
         $this->app->instance(ExceptionHandler::class, new class extends Handler
         {
             public function __construct(){}
-            public function report(Exception $e){}
-            public function render($request, Exception $exception){throw $exception;}
+            public function report(Throwable $e){}
+            public function render($request, Throwable $exception){throw $exception;}
         });
     }
 }
