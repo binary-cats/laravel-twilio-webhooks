@@ -100,7 +100,19 @@ I like to group functionality by domain, so I would suggest `webhooks/twilio.com
 Route::twilioWebhooks('webhooks/twilio.com');
 ```
 
-Behind the scenes this will register a `POST` route to a controller provided by this package. Because Twilio has no way of getting a csrf-token, you must add that route to the `except` array of the `VerifyCsrfToken` middleware:
+Behind the scenes this will register a `POST` route to a controller provided by this package. Because Twilio has no way of getting a csrf-token, you must exclude that route from CSRF protection.
+
+On Laravel 11 and newer, do this in `bootstrap/app.php`:
+
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->validateCsrfTokens(except: [
+        'webhooks/twilio.com',
+    ]);
+})
+```
+
+On older applications (or ones that kept the `app/Http/Kernel.php` structure), add the route to the `except` array of the `VerifyCsrfToken` middleware:
 
 ```php
 protected $except = [
