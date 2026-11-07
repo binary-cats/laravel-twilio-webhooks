@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     strategy:
+      fail-fast: false
       matrix:
         php-version: ['8.2', '8.3']
         laravel-version: ['8.*', '9.*', '10.*', '11.*', '12.*', '13.*']
@@ -54,8 +55,9 @@ jobs:
     
     - name: Install dependencies
       run: |
+        composer config --global policy.advisories.block false
         composer require "laravel/framework:${{ matrix.laravel-version }}" "orchestra/testbench:${{ matrix.testbench-version }}" --no-interaction --no-update
-        composer update --prefer-dist --no-interaction --no-suggest
+        composer update --prefer-dist --no-interaction
     
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: vendor/bin/phpunit
