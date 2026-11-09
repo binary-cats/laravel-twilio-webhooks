@@ -6,6 +6,7 @@ use BinaryCats\TwilioWebhooks\Exceptions\WebhookFailed;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\WebhookClient\Models\WebhookCall;
 use Twilio\Security\RequestValidator;
 
@@ -30,6 +31,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_can_handle_a_valid_request()
     {
         $payload = [
@@ -62,6 +64,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_can_handle_a_valid_request_even_with_wrong_case()
     {
         $payload = [
@@ -127,6 +130,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function a_request_with_an_invalid_signature_wont_be_logged()
     {
         $payload = [
@@ -148,6 +152,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function a_request_with_an_invalid_payload_will_be_logged_but_events_and_jobs_will_not_be_dispatched()
     {
         $payload = ['invalid_payload'];
@@ -173,6 +178,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test * */
+    #[Test]
     public function a_request_with_a_config_key_will_use_the_correct_signing_token()
     {
         config()->set('twilio-webhooks.signing_token', 'secret1');
@@ -191,6 +197,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function an_invalid_signature_value_generates_a_500_error()
     {
         $payload = [
@@ -212,6 +219,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_skip_validation_of_signature_when_instructed()
     {
         config(['twilio-webhooks.verify_signature' => false]);
@@ -244,6 +252,7 @@ class IntegrationTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_throw_exception_when_token_is_not_set()
     {
         config(['twilio-webhooks.signing_token' => null]);
@@ -266,7 +275,7 @@ class IntegrationTest extends TestCase
      * @param string|null $configKey
      * @return string
      */
-    protected function determineTwilioSignature(array $payload, string $url, string $configKey = null): string
+    protected function determineTwilioSignature(array $payload, string $url, ?string $configKey = null): string
     {
         $secret = ($configKey) ?
             config("twilio-webhooks.signing_token_{$configKey}") :

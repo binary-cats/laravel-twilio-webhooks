@@ -5,6 +5,7 @@ namespace Tests;
 use BinaryCats\TwilioWebhooks\Exceptions\WebhookFailed;
 use BinaryCats\TwilioWebhooks\ProcessTwilioWebhookJob;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\WebhookClient\Models\WebhookCall;
 
 class TwilioWebhookCallTest extends TestCase
@@ -36,6 +37,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_fire_off_the_configured_job()
     {
         $this->processTwilioWebhookJob->handle();
@@ -44,6 +46,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_not_dispatch_a_job_for_another_type()
     {
         config(['twilio-webhooks.jobs' => ['another_type' => DummyJob::class]]);
@@ -54,6 +57,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_not_dispatch_jobs_when_no_jobs_are_configured()
     {
         config(['twilio-webhooks.jobs' => []]);
@@ -64,6 +68,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_dispatch_events_even_when_no_corresponding_job_is_configured()
     {
         config(['twilio-webhooks.jobs' => ['another_type' => DummyJob::class]]);
@@ -83,6 +88,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_throw_exception_when_job_is_configutred_but_not_set()
     {
         config(['twilio-webhooks.jobs' => ['initiated' => 'Job\Does\Not\ExistClass']]);
@@ -94,6 +100,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_will_change_the_key_for_the_job()
     {
         $job = new ProcessTwilioWebhookJob($this->webhookCall);
@@ -104,6 +111,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_handles_call_status_key_in_webhook_payload()
     {
         $webhookCall = WebhookCall::create([
@@ -122,6 +130,7 @@ class TwilioWebhookCallTest extends TestCase
     }
 
     /** @test */
+    #[Test]
     public function it_handles_sms_status_key_in_webhook_payload()
     {
         $webhookCall = WebhookCall::create([
